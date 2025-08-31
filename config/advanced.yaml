@@ -1,0 +1,333 @@
+# Advanced Configuration for MoE Router V3
+# For research, validation, and enterprise deployments
+# Full feature set with multiple backends and comprehensive analysis
+
+# Multi-Backend Configuration (Research/Validation Mode)
+backends:
+  - name: "ollama_primary"
+    type: "ollama"
+    model: "qwen2.5:7b"  # Validated for A*→G mechanism
+    host: "localhost"
+    port: 11434
+    weight: 0.7  # Primary backend
+    
+  - name: "ollama_secondary" 
+    type: "ollama"
+    model: "mixtral:8x7b"  # Real MoE for validation
+    host: "localhost"
+    port: 11435
+    weight: 0.2
+    
+  - name: "mlx_local"
+    type: "mlx"
+    model: "mlx-community/Qwen2.5-7B-Instruct-4bit"
+    device: "gpu"
+    weight: 0.1
+    enabled: true
+    
+  - name: "vllm_cluster"
+    type: "vllm"
+    model: "Qwen/Qwen2.5-7B-Instruct"
+    api_url: "http://vllm-cluster:8000"
+    weight: 0.0  # Disabled by default
+    enabled: false
+
+# Backend Selection Strategy
+backend_strategy:
+  type: "weighted_round_robin"  # or "adaptive", "a_b_test", "mediation_aware"
+  
+  # A/B testing for mediation validation
+  a_b_testing:
+    enabled: true
+    traffic_split:
+      ollama_primary: 0.8
+      mlx_local: 0.2
+    metrics: ["A_star", "G", "L_perp", "mediation_ratio"]
+  
+  # Adaptive routing based on ambiguity
+  adaptive:
+    enabled: false
+    low_ambiguity_backends: ["ollama_primary"]
+    high_ambiguity_backends: ["mixtral:8x7b"]  # Real MoE for complex cases
+
+# Advanced Controller Configuration
+controller:
+  type: "v3_pi_spike_guard_research"
+  improvement_target: 4.72
+  
+  # Extended parameter ranges for research
+  beta_min: 0.5
+  beta_max: 2.0
+  lambda_min: 0.1
+  lambda_max: 0.9
+  
+  # Advanced PI Controller
+  pi_controller:
+    enabled: true
+    adaptive_target: true  # Dynamic G_target based on conditions
+    
+    # Per-ambiguity-bin targets
+    targets:
+      very_low: 0.3    # A* < 0.2
+      low: 0.4         # A* 0.2-0.4  
+      medium: 0.5      # A* 0.4-0.6
+      high: 0.6        # A* 0.6-0.8
+      very_high: 0.7   # A* > 0.8
+    
+    # Advanced PI parameters
+    k_p: 0.12
+    k_i: 0.02
+    k_d: 0.005  # Derivative term
+    
+    # Integral windup protection
+    integral_max: 5.0
+    integral_decay: 0.95
+    
+    # Anti-windup
+    anti_windup: true
+  
+  # Enhanced Spike Guard
+  spike_guard:
+    enabled: true
+    adaptive_threshold: true
+    
+    # Per-task-type thresholds
+    thresholds:
+      reasoning: 2.0
+      code: 2.5
+      generation: 3.0
+      analysis: 2.2
+    
+    # Advanced spike detection
+    detection_window: 10
+    trend_analysis: true
+    correlation_damping: true
+  
+  # Research features
+  research:
+    enable_counterfactual: true
+    enable_mediation_tracking: true
+    enable_gradient_analysis: true
+    enable_expert_specialization: true
+
+# Comprehensive Telemetry
+telemetry:
+  enabled: true
+  
+  # Multiple output formats
+  formats: ["jsonl", "parquet", "json"]
+  output_dir: "telemetry/research"
+  
+  # High-frequency collection
+  buffer_size: 1000
+  flush_interval: 30
+  
+  # Comprehensive metrics
+  include_mediation: true
+  include_detailed_routing: true
+  include_expert_weights: true
+  include_gradient_analysis: true
+  include_perturbation_data: true
+  
+  # Advanced mediation analysis
+  mediation:
+    track_partial_correlations: true
+    bootstrap_samples: 1000
+    confidence_intervals: true
+    orthogonal_directions: 8
+    
+    # Measurement hygiene
+    fixed_delta_norm: 0.01
+    winsorize_L_parallel: true
+    winsorize_percentile: 95
+  
+  # Research data collection
+  research_data:
+    save_routing_trajectories: true
+    save_perturbation_responses: true
+    save_ambiguity_decomposition: true
+    export_for_analysis: true
+
+# Advanced Monitoring
+monitoring:
+  dashboard:
+    enabled: true
+    port: 3000
+    
+    # Research views
+    research_mode: true
+    views:
+      - "production_overview"
+      - "mediation_analysis" 
+      - "research_deep_dive"
+      - "expert_analysis"
+      - "counterfactual_results"
+      - "a_b_test_comparison"
+    
+    # Real-time mediation tracking
+    live_mediation: true
+    correlation_update_interval: 10
+  
+  # Comprehensive alerting
+  alerts:
+    enabled: true
+    config_file: "config/research_alerts.yaml"
+    
+    # All notification channels
+    channels: ["slack", "email", "pagerduty", "webhook"]
+    
+    # Research-specific alerts
+    research_alerts:
+      - "mediation_pathway_weak"
+      - "A_star_range_compressed"
+      - "backend_correlation_diverged"
+      - "experimental_controller_unstable"
+  
+  # Performance profiling
+  profiling:
+    enabled: true
+    cpu_profiler: true
+    memory_profiler: true
+    latency_breakdown: true
+
+# Deployment Configuration
+deployment:
+  mode: "research"  # or "validation", "production"
+  environment: "research"
+  
+  # Comprehensive validation
+  validation:
+    validate_improvement: true
+    validate_mediation: true
+    validate_multi_backend: true
+    run_counterfactual: true
+    
+    # Validation thresholds
+    thresholds:
+      min_improvement_factor: 2.0
+      min_rho_A_G: 0.25
+      max_mediation_ratio: 0.4
+      min_backend_correlation: 0.7
+  
+  # Advanced logging
+  logging:
+    level: "DEBUG"
+    format: "structured"
+    destinations:
+      - type: "file"
+        path: "/var/log/moe-router/research.log"
+      - type: "elasticsearch"
+        url: "http://elasticsearch:9200"
+        index: "moe-router-research"
+      - type: "prometheus"
+        enabled: true
+
+# Experimentation Framework
+experiments:
+  enabled: true
+  
+  # A/B testing
+  a_b_tests:
+    - name: "pi_controller_variants"
+      description: "Test different PI controller parameters"
+      traffic_split: 0.1
+      variants:
+        - name: "conservative"
+          k_p: 0.08
+          k_i: 0.01
+        - name: "aggressive" 
+          k_p: 0.15
+          k_i: 0.03
+    
+    - name: "backend_mediation_comparison"
+      description: "Compare mediation strength across backends"
+      traffic_split: 0.2
+      backends: ["ollama_primary", "mlx_local"]
+      
+  # Feature flags with gradual rollout
+  feature_flags:
+    counterfactual_replay: 
+      enabled: true
+      rollout_percentage: 100
+    
+    advanced_mediation_analysis:
+      enabled: true
+      rollout_percentage: 100
+      
+    multi_backend_support:
+      enabled: true
+      rollout_percentage: 50
+      
+    experimental_controllers:
+      enabled: true
+      rollout_percentage: 10  # Limited rollout
+      
+    gradient_flow_analysis:
+      enabled: true
+      rollout_percentage: 20
+
+# Research Data Export
+data_export:
+  enabled: true
+  
+  # Export formats
+  formats: ["csv", "parquet", "hdf5", "json"]
+  
+  # Export schedules
+  schedules:
+    - name: "hourly_mediation"
+      frequency: "0 * * * *"  # Every hour
+      data: ["mediation_metrics", "correlation_data"]
+      
+    - name: "daily_full_export"
+      frequency: "0 2 * * *"  # Daily at 2 AM
+      data: ["all_telemetry", "routing_trajectories", "expert_weights"]
+  
+  # Data anonymization
+  anonymization:
+    enabled: true
+    hash_user_ids: true
+    remove_personal_data: true
+    
+# Integration APIs
+integrations:
+  # MLflow for experiment tracking
+  mlflow:
+    enabled: true
+    tracking_uri: "http://mlflow:5000"
+    experiment_name: "moe-router-mediation"
+    
+  # Weights & Biases
+  wandb:
+    enabled: false
+    project: "moe-router-research"
+    entity: "research-team"
+    
+  # TensorBoard
+  tensorboard:
+    enabled: true
+    log_dir: "/var/log/moe-router/tensorboard"
+    
+  # Custom webhooks for research notifications
+  webhooks:
+    - name: "research_team_slack"
+      url: "https://hooks.slack.com/research"
+      events: ["mediation_analysis_complete", "breakthrough_detected"]
+
+# Security (Research environment)
+security:
+  api_keys:
+    enabled: false  # Research environment
+    
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 1000  # Higher limit for research
+    
+  cors:
+    enabled: true
+    origins: ["*"]  # Permissive for research
+    
+  data_retention:
+    research_data: "1 year"
+    telemetry: "6 months" 
+    logs: "3 months"

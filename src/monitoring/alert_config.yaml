@@ -1,0 +1,313 @@
+# Production Alert Configuration for MoE Router V3
+# Comprehensive alerting with auto-revert and escalation
+
+alert_rules:
+  # Critical Performance Alerts (Auto-Revert Enabled)
+  - name: "G_p99_critical"
+    description: "G_p99 exceeds critical safety threshold"
+    condition: "G_p99 > threshold"
+    severity: "critical"
+    threshold: 5.0
+    duration_seconds: 120  # 2 minutes
+    auto_revert: true
+    channels: ["pagerduty", "slack", "oncall"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/g-p99-spike"
+    
+  - name: "error_rate_spike"
+    description: "Error rate significantly above baseline"
+    condition: "error_rate > threshold"
+    severity: "critical"
+    threshold: 0.05  # 5%
+    duration_seconds: 60
+    auto_revert: true
+    channels: ["pagerduty", "slack"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/error-rate-spike"
+    
+  - name: "auto_revert_active"
+    description: "Auto-revert mechanism has been triggered"
+    condition: "auto_revert_count > threshold"
+    severity: "critical"
+    threshold: 0
+    duration_seconds: 30
+    channels: ["pagerduty", "oncall", "slack", "email"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/auto-revert"
+  
+  # Performance Degradation Alerts
+  - name: "high_gating_sensitivity"
+    description: "Gating sensitivity above target range"
+    condition: "avg_gating_sensitivity > threshold"
+    severity: "warning"
+    threshold: 2.5
+    duration_seconds: 300  # 5 minutes
+    channels: ["slack"]
+    ambiguity_conditional: true
+    min_ambiguity: 0.7  # Only alert for high ambiguity cases
+    max_ambiguity: 1.0
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/high-gating-sensitivity"
+    
+  - name: "winner_flip_rate_high"
+    description: "Winner flip rate indicates routing instability"
+    condition: "avg_winner_flip_rate > threshold"
+    severity: "warning"
+    threshold: 0.18
+    duration_seconds: 180
+    channels: ["slack"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/routing-instability"
+    
+  - name: "latency_degradation"
+    description: "Average latency significantly increased"
+    condition: "avg_latency_ms > threshold"
+    severity: "warning"
+    threshold: 150.0  # ms
+    duration_seconds: 240
+    channels: ["slack"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/latency-degradation"
+    
+  - name: "latency_trend_negative"
+    description: "Latency trend shows sustained increase"
+    condition: "latency_trend > threshold"
+    severity: "warning"
+    threshold: 0.2  # 20% increase
+    duration_seconds: 600  # 10 minutes
+    channels: ["slack"]
+    
+  # Controller Health Alerts
+  - name: "pi_controller_instability"
+    description: "PI controller showing high integral error"
+    condition: "pi_integral_error > threshold"
+    severity: "warning"
+    threshold: 2.0
+    duration_seconds: 300
+    channels: ["slack"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/pi-controller-tuning"
+    
+  - name: "spike_guard_overactive"
+    description: "Spike guard activating too frequently"
+    condition: "spike_guard_activation_rate > threshold"
+    severity: "warning"
+    threshold: 0.15  # 15% of requests
+    duration_seconds: 180
+    channels: ["slack"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/spike-guard-tuning"
+    
+  # Mediation Analysis Alerts
+  - name: "mediation_pathway_weak"
+    description: "A* → G mediation pathway weaker than expected"
+    condition: "rho_A_G < threshold"
+    severity: "warning"
+    threshold: 0.25
+    duration_seconds: 600  # 10 minutes
+    channels: ["slack", "email"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/mediation-analysis"
+    
+  - name: "mediation_ratio_high"
+    description: "Mediation ratio indicates weak G pathway"
+    condition: "mediation_ratio > threshold"
+    severity: "info"
+    threshold: 0.4
+    duration_seconds: 900  # 15 minutes
+    channels: ["slack"]
+    
+  # System Health Alerts
+  - name: "low_request_volume"
+    description: "Request volume unexpectedly low"
+    condition: "total_requests < threshold"
+    severity: "warning"
+    threshold: 100  # requests in monitoring window
+    duration_seconds: 300
+    channels: ["slack"]
+    
+  - name: "G_rate_of_change_high"
+    description: "Gating sensitivity changing too rapidly"
+    condition: "G_rate_of_change > threshold"
+    severity: "info"
+    threshold: 1.0
+    duration_seconds: 120
+    channels: ["slack"]
+    
+  # Emergency Situations
+  - name: "service_degraded"
+    description: "Multiple performance metrics degraded simultaneously"
+    condition: "compound_degradation > threshold"
+    severity: "critical"
+    threshold: 0.8
+    duration_seconds: 90
+    auto_revert: true
+    channels: ["pagerduty", "oncall", "slack"]
+    runbook_url: "https://wiki.company.com/moe-router/runbooks/service-degradation"
+
+# Notification Channels
+notification_channels:
+  - name: "slack"
+    type: "slack"
+    enabled: true
+    config:
+      webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+      channel: "#moe-router-alerts"
+      username: "MoE Router Alerts"
+      
+  - name: "pagerduty"
+    type: "pagerduty"
+    enabled: true
+    config:
+      routing_key: "YOUR_PAGERDUTY_ROUTING_KEY"
+      service_id: "YOUR_SERVICE_ID"
+      
+  - name: "oncall"
+    type: "webhook"
+    enabled: true
+    config:
+      url: "https://oncall.company.com/api/alerts"
+      headers:
+        Authorization: "Bearer YOUR_TOKEN"
+        
+  - name: "email"
+    type: "email"
+    enabled: true
+    config:
+      smtp_server: "smtp.company.com"
+      smtp_port: 587
+      username: "alerts@company.com"
+      password: "YOUR_SMTP_PASSWORD"
+      to_addresses: ["team@company.com", "oncall@company.com"]
+      
+  - name: "webhook_generic"
+    type: "webhook"
+    enabled: true
+    config:
+      url: "https://monitoring.company.com/api/alerts/moe-router"
+      method: "POST"
+      headers:
+        Content-Type: "application/json"
+        X-Source: "moe-router-alerts"
+
+# Alert Correlation and Suppression
+correlation:
+  enabled: true
+  
+  # Suppress cascading alerts
+  suppression_rules:
+    - name: "auto_revert_suppresses_all"
+      description: "When auto-revert is active, suppress most other alerts"
+      trigger_alert: "auto_revert_active"
+      suppressed_alerts: ["high_gating_sensitivity", "winner_flip_rate_high", "latency_degradation"]
+      duration_seconds: 300
+      
+    - name: "G_p99_suppresses_related"
+      description: "High G_p99 suppresses related performance alerts"
+      trigger_alert: "G_p99_critical"
+      suppressed_alerts: ["high_gating_sensitivity", "pi_controller_instability"]
+      duration_seconds: 180
+      
+  # Alert grouping
+  grouping_rules:
+    - name: "performance_degradation"
+      description: "Group related performance alerts"
+      alerts: ["high_gating_sensitivity", "winner_flip_rate_high", "latency_degradation"]
+      window_seconds: 300
+      
+    - name: "controller_health" 
+      description: "Group controller health alerts"
+      alerts: ["pi_controller_instability", "spike_guard_overactive"]
+      window_seconds: 180
+
+# Escalation Policies
+escalation:
+  enabled: true
+  
+  policies:
+    - name: "critical_escalation"
+      description: "Escalate critical alerts if not acknowledged"
+      severity: "critical"
+      escalation_levels:
+        - delay_minutes: 5
+          channels: ["pagerduty", "oncall"]
+        - delay_minutes: 15
+          channels: ["pagerduty", "oncall", "email"]
+        - delay_minutes: 30
+          channels: ["pagerduty", "oncall", "email", "executive"]
+          
+    - name: "warning_escalation"
+      description: "Escalate warnings if they persist"
+      severity: "warning"
+      escalation_levels:
+        - delay_minutes: 30
+          channels: ["slack", "email"]
+        - delay_minutes: 120
+          channels: ["email", "oncall"]
+
+# Maintenance Windows
+maintenance:
+  enabled: true
+  
+  # Suppress alerts during known maintenance
+  windows:
+    - name: "weekly_deployment"
+      description: "Weekly deployment window"
+      schedule: "0 2 * * 1"  # Monday 2 AM UTC
+      duration_minutes: 60
+      suppress_all: false
+      suppressed_alerts: ["latency_degradation", "G_rate_of_change_high"]
+      
+    - name: "model_refresh"
+      description: "Model refresh maintenance"
+      schedule: "0 3 1 * *"  # First day of month, 3 AM UTC
+      duration_minutes: 120
+      suppress_all: true
+
+# Health Check
+healthcheck:
+  enabled: true
+  interval_seconds: 60
+  
+  # Self-monitoring
+  self_alerts:
+    - name: "alert_manager_down"
+      description: "Alert manager is not processing metrics"
+      threshold_minutes: 5
+      channels: ["pagerduty", "oncall"]
+      
+    - name: "metric_collection_failed"
+      description: "Unable to collect metrics from API"
+      threshold_failures: 3
+      channels: ["slack"]
+
+# Logging and Audit
+logging:
+  level: "INFO"
+  format: "json"
+  destinations:
+    - type: "file"
+      path: "/var/log/moe-router/alerts.log"
+      max_size_mb: 100
+      max_files: 10
+    - type: "syslog"
+      facility: "local0"
+    - type: "elasticsearch"
+      url: "https://logs.company.com"
+      index: "moe-router-alerts"
+
+# Metrics Export
+metrics_export:
+  enabled: true
+  
+  # Prometheus metrics
+  prometheus:
+    enabled: true
+    port: 9091
+    path: "/metrics"
+    
+  # Custom metrics
+  custom_metrics:
+    - name: "alert_manager_alerts_active"
+      type: "gauge"
+      description: "Number of active alerts"
+      
+    - name: "alert_manager_auto_reverts_total" 
+      type: "counter"
+      description: "Total number of auto-reverts triggered"
+      
+    - name: "alert_manager_notifications_sent_total"
+      type: "counter"
+      description: "Total notifications sent"
+      labels: ["channel", "severity"]

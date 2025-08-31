@@ -1,0 +1,308 @@
+# Production Rollout Configuration for MoE Router V3
+# Safe deployment strategy: Shadow → Canary → Ramp
+# Validated for 4.72× improvement in gating sensitivity
+
+rollout:
+  strategy: "progressive"
+  total_duration_hours: 48
+  
+  phases:
+    # Phase 1: Shadow Mode (Compute but don't apply)
+    shadow:
+      duration_hours: 24
+      traffic_percentage: 0  # No traffic impact
+      config:
+        policy_id: "ctrl_v3_shadow" 
+        compute_controlled_routing: true
+        apply_controlled_routing: false
+        log_comparisons: true
+      
+      success_criteria:
+        # Must show expected improvements in shadow logs
+        min_G_reduction_pct: 15  # Conservative threshold for shadow
+        max_win_rate_impact_pct: 1.0
+        max_latency_overhead_ms: 5
+        min_samples: 1000
+      
+      alerts:
+        - name: "shadow_insufficient_samples"
+          condition: "sample_count < 100 after 2 hours"
+          severity: "warning"
+        - name: "shadow_unexpected_behavior"  
+          condition: "G_reduction < 5% after 12 hours"
+          severity: "critical"
+    
+    # Phase 2: Canary (5% live traffic)
+    canary:
+      duration_hours: 4
+      traffic_percentage: 5
+      config:
+        policy_id: "ctrl_v3_canary"
+        compute_controlled_routing: true
+        apply_controlled_routing: true
+        
+        # Conservative V3 parameters for canary
+        controller_params:
+          beta_min: 0.90  # Slightly higher than target
+          beta_max: 1.55  # Slightly lower than target
+          lambda_min: 0.30
+          lambda_max: 0.70
+          
+          # PI Controller (gentle settings)
+          G_target_high_ambiguity: 0.65  # Conservative target
+          k_p: 0.10  # Lower gain
+          k_i: 0.015
+          
+          # Spike guard (aggressive)
+          spike_threshold: 2.0  # Lower threshold
+          spike_trigger_count: 2  # Trigger sooner
+          spike_hold_ticks: 7  # Hold longer
+          
+          # Safety (strict)
+          G_p99_cap: 4.0  # Strict cap
+          auto_revert_threshold: 1  # Immediate revert
+      
+      success_criteria:
+        # Strict criteria for canary
+        min_G_reduction_pct: 18  # Must hit close to target
+        max_win_rate_impact_pct: 0.8  # Stricter than shadow
+        max_latency_increase_pct: 5
+        max_error_rate_increase_pct: 0.1
+        min_samples: 200
+        
+        # Mediation validation
+        min_rho_A_G: 0.25  # Reasonable correlation in live data
+        max_mediation_ratio: 0.35  # Strong mediation
+      
+      alerts:
+        - name: "canary_G_target_missed"
+          condition: "G_reduction < 15% after 2 hours"
+          severity: "critical"
+          action: "auto_revert"
+        - name: "canary_win_rate_drop"
+          condition: "win_rate_drop > 1% in clear_bins"
+          severity: "critical"
+          action: "auto_revert"
+        - name: "canary_latency_spike"
+          condition: "p95_latency_increase > 10%"
+          severity: "warning"
+        - name: "canary_error_rate_spike"
+          condition: "error_rate > baseline * 1.5"
+          severity: "critical" 
+          action: "auto_revert"
+    
+    # Phase 3: Gradual Ramp (5% → 25% → 50% → 100%)
+    ramp:
+      duration_hours: 20
+      sub_phases:
+        - name: "ramp_25"
+          traffic_percentage: 25
+          duration_hours: 6
+          wait_for_success: true
+        - name: "ramp_50"
+          traffic_percentage: 50  
+          duration_hours: 6
+          wait_for_success: true
+        - name: "ramp_100"
+          traffic_percentage: 100
+          duration_hours: 8
+          
+      config:
+        policy_id: "ctrl_v3_production"
+        
+        # Full production parameters
+        controller_params:
+          beta_min: 0.85  # Target parameters
+          beta_max: 1.65
+          lambda_min: 0.25
+          lambda_max: 0.75
+          
+          # PI Controller (production settings)
+          G_target_high_ambiguity: 0.60
+          k_p: 0.12
+          k_i: 0.02
+          
+          # Spike guard (standard)
+          spike_threshold: 2.5
+          spike_trigger_count: 3
+          spike_hold_ticks: 5
+          
+          # Safety (production)
+          G_p99_cap: 5.0
+          auto_revert_threshold: 2
+      
+      success_criteria:
+        # Production targets
+        min_G_reduction_pct: 20  # Full target
+        max_win_rate_impact_pct: 0.5  # Tight control
+        max_latency_increase_pct: 3
+        max_error_rate_increase_pct: 0.05
+        
+        # Stability requirements  
+        max_winner_flip_rate: 0.15
+        max_routing_entropy_variance: 0.1
+        min_uptime_pct: 99.5
+      
+      alerts:
+        - name: "ramp_target_regression"
+          condition: "G_reduction < 18% for 30 minutes"
+          severity: "warning"
+        - name: "ramp_stability_degraded"
+          condition: "winner_flip_rate > 0.18 or routing_thrash > 0.2"
+          severity: "warning"
+        - name: "ramp_quality_regression"  
+          condition: "win_rate_drop > 0.7% sustained for 1 hour"
+          severity: "critical"
+          action: "partial_revert"
+
+# Monitoring and Observability
+monitoring:
+  dashboard_url: "http://localhost:3000/moe-routing"
+  
+  key_metrics:
+    # Primary Success Metrics
+    - name: "G_reduction_pct"
+      description: "Gating sensitivity reduction vs baseline"
+      target: "> 20%"
+      alert_threshold: "< 15%"
+      
+    - name: "win_rate_impact_clear_bins" 
+      description: "Win rate impact in A* ≤ 0.3 bins"
+      target: "> -0.5%"
+      alert_threshold: "< -1.0%"
+      
+    - name: "latency_jitter_reduction"
+      description: "Latency jitter reduction"
+      target: "> 15%"
+      alert_threshold: "< 10%"
+    
+    # Mediation Validation
+    - name: "rho_A_G"
+      description: "A* → G correlation (mediation pathway)"
+      target: "> 0.30"
+      alert_threshold: "< 0.20"
+      
+    - name: "mediation_ratio"
+      description: "|ρ(A*, L_⊥|G)| / |ρ(A*, L_⊥)|"
+      target: "< 0.30"
+      alert_threshold: "> 0.50"
+    
+    # Safety Metrics
+    - name: "G_p99"
+      description: "99th percentile gating sensitivity"
+      target: "< 4.0"
+      alert_threshold: "> 5.0"
+      action: "auto_revert"
+      
+    - name: "auto_revert_rate"
+      description: "Rate of auto-revert triggers"
+      target: "< 0.1%"
+      alert_threshold: "> 1.0%"
+      
+    - name: "spike_guard_activation"
+      description: "Spike guard activation rate"
+      target: "< 5%"
+      alert_threshold: "> 15%"
+  
+  dashboards:
+    - name: "Rollout Overview"
+      panels:
+        - "Traffic percentage by phase"
+        - "Key metrics vs targets"
+        - "Success criteria status"
+        
+    - name: "Mediation Analysis"
+      panels:
+        - "A* vs G scatter (real-time)"
+        - "G vs L_⊥ correlation"
+        - "Partial correlation trends"
+        - "Mediation ratio over time"
+        
+    - name: "Performance Impact" 
+      panels:
+        - "Latency distribution by clarity bins"
+        - "Win rate by ambiguity deciles"
+        - "Error rates and throughput"
+        
+    - name: "Controller Health"
+      panels:
+        - "PI controller state"
+        - "Spike guard activations"
+        - "Auto-revert triggers"
+        - "G_p99 safety margins"
+
+# Emergency Procedures
+emergency:
+  auto_revert:
+    enabled: true
+    triggers:
+      - "G_p99 > cap for 2 consecutive minutes"
+      - "error_rate > 5× baseline" 
+      - "win_rate_drop > 2% in clear bins"
+      - "latency_p95 > 2× baseline"
+    
+    revert_policy: "immediate_baseline"
+    notification_channels: ["pager", "slack", "email"]
+  
+  manual_controls:
+    emergency_stop:
+      command: "kubectl patch deployment moe-router --patch '{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"emergency.stop\":\"true\"}}}}}'"
+      description: "Immediately revert to baseline routing"
+    
+    traffic_control:
+      canary_hold: "Hold current traffic percentage"
+      canary_advance: "Advance to next phase"  
+      canary_revert: "Revert to previous phase"
+    
+    parameter_tuning:
+      # Live parameter adjustment (use with extreme caution)
+      beta_range_adjustment: "Adjust beta_min/beta_max by ±0.1"
+      pi_target_adjustment: "Adjust G_target by ±0.1"
+      spike_guard_sensitivity: "Adjust spike threshold by ±0.5"
+
+# Rollback Plan
+rollback:
+  # Immediate rollback triggers
+  immediate_triggers:
+    - "Service availability < 95%"
+    - "Data corruption detected"
+    - "Security breach indicators"
+  
+  # Gradual rollback procedure
+  gradual_procedure:
+    - "Reduce traffic to 50% over 10 minutes"
+    - "Reduce to 25% over next 10 minutes" 
+    - "Reduce to 5% over next 5 minutes"
+    - "Full revert to baseline"
+  
+  # Data preservation
+  preserve_telemetry: true
+  preserve_mediation_analysis: true
+  generate_rollback_report: true
+
+# Success Validation
+validation:
+  # Final validation criteria (all phases complete)
+  final_success_criteria:
+    - "G_reduction ≥ 20% sustained for 4 hours at 100% traffic"
+    - "Win rate impact ≤ 0.5% in clear bins"
+    - "Latency jitter reduction ≥ 15%" 
+    - "Mediation pathway confirmed (ρ(A*, G) ≥ 0.30)"
+    - "System stability maintained (uptime ≥ 99.5%)"
+    - "No critical alerts for final 2 hours"
+  
+  # Documentation requirements
+  required_artifacts:
+    - "Counterfactual analysis report"
+    - "A/B test statistical summary"
+    - "Performance benchmark comparison"
+    - "Mediation validation plots"
+    - "Incident log (if any)"
+    - "Post-mortem (if any issues)"
+  
+  # Sign-off requirements
+  approvals_required:
+    - "Engineering lead"
+    - "Site reliability engineer" 
+    - "Product manager"
+    - "Security team (for production changes)"

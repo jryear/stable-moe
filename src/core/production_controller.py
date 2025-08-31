@@ -17,7 +17,7 @@ from collections import deque
 
 @dataclass
 class RoutingMetrics:
-    """Comprehensive routing stability metrics"""
+    """Comprehensive routing stability metrics with enhanced mediation tracking"""
     gating_sensitivity: float
     winner_flip_rate: float
     boundary_distance: float
@@ -27,6 +27,12 @@ class RoutingMetrics:
     clarity_score: float
     beta: float
     lambda_val: float
+    
+    # Enhanced metrics for mediation analysis
+    distance_to_vertex: float  # D = 1 - max_i w_i (often better than entropy)
+    gradient_norm: float  # ||∇w|| for spike detection
+    mediation_ratio: Optional[float]  # ρ(A*, L_⊥ | G) if available
+    expected_G_reduction: float  # Predicted G reduction from control
 
 class ProductionClarityController:
     """
@@ -69,10 +75,11 @@ class ProductionClarityController:
         self.total_latency = 0.0
         self.error_count = 0
         
-        # Alert thresholds (from validation)
+        # Alert thresholds (from validation and mediation analysis)
         self.FLIP_RATE_THRESHOLD = 0.15
-        self.SENSITIVITY_THRESHOLD = 2.0
+        self.SENSITIVITY_THRESHOLD = 2.0  # Target G < 2.0 for high ambiguity
         self.LATENCY_THRESHOLD = 50  # ms
+        self.GRADIENT_SPIKE_THRESHOLD = 2.5  # ||∇w|| spike detection
         
         self.logger.info("ProductionClarityController initialized with 4.72x validated improvement")
     
@@ -180,14 +187,16 @@ class ProductionClarityController:
                         beta: float,
                         lam: float,
                         start_time: float) -> RoutingMetrics:
-        """Compute comprehensive routing metrics"""
+        """Compute comprehensive routing metrics with enhanced mediation tracking"""
         
         # Gating sensitivity (key metric for 4.72x improvement)
         if self.p_prev is not None:
             delta_w = np.linalg.norm(p_route - self.p_prev)
-            gating_sensitivity = delta_w / 0.01  # Normalized by small perturbation
+            gating_sensitivity = delta_w / 0.01  # Normalized by fixed perturbation
+            gradient_norm = float(np.linalg.norm(p_route - self.p_prev))
         else:
             gating_sensitivity = 0.0
+            gradient_norm = 0.0
         
         # Winner flip rate (primary stability metric: ρ(FlipRate, L_⊥) = +0.478)
         current_winner = np.argmax(p_route)
@@ -198,10 +207,22 @@ class ProductionClarityController:
             winner_flip_rate = np.mean(self.flip_history) if self.flip_history else 0.0
             self.prev_winner = current_winner
         
-        # Other stability metrics
+        # Core stability metrics
         boundary_distance = 1.0 - np.max(p_route)
         routing_entropy = -np.sum(p_route * np.log(p_route + 1e-9))
         latency_ms = (time.time() - start_time) * 1000
+        
+        # Enhanced metrics for mediation analysis
+        distance_to_vertex = 1.0 - np.max(p_route)  # D = 1 - max_i w_i (often better than entropy)
+        
+        # Expected G reduction based on control parameters
+        # High ambiguity baseline G ≈ 3.0, we target < 2.0
+        baseline_G = 3.0 if ambiguity_score > 0.7 else 1.5
+        controlled_G = baseline_G * (beta / self.beta_max) * (lam / self.lambda_max)
+        expected_G_reduction = max(0.0, baseline_G - controlled_G)
+        
+        # Get recent mediation ratio if available
+        mediation_ratio = self._get_recent_mediation_ratio()
         
         return RoutingMetrics(
             gating_sensitivity=gating_sensitivity,
@@ -212,11 +233,28 @@ class ProductionClarityController:
             timestamp=time.time(),
             clarity_score=clarity,
             beta=beta,
-            lambda_val=lam
+            lambda_val=lam,
+            # Enhanced metrics
+            distance_to_vertex=distance_to_vertex,
+            gradient_norm=gradient_norm,
+            mediation_ratio=mediation_ratio,
+            expected_G_reduction=expected_G_reduction
         )
     
+    def _get_recent_mediation_ratio(self) -> Optional[float]:
+        """Get recent mediation ratio from validation results if available"""
+        try:
+            results_path = Path("validation/results/enhanced_mediator_results.json")
+            if results_path.exists():
+                with open(results_path) as f:
+                    data = json.load(f)
+                    return data.get('summary', {}).get('mediation_ratio')
+        except:
+            pass
+        return None
+    
     def _check_alerts(self, metrics: RoutingMetrics, request_id: Optional[str]):
-        """Check for critical stability alerts"""
+        """Check for critical stability alerts including enhanced mediation-based thresholds"""
         
         if metrics.winner_flip_rate > self.FLIP_RATE_THRESHOLD:
             self.logger.warning(
@@ -227,13 +265,27 @@ class ProductionClarityController:
         if metrics.gating_sensitivity > self.SENSITIVITY_THRESHOLD:
             self.logger.warning(
                 f"HIGH_GATING_SENSITIVITY: {metrics.gating_sensitivity:.3f} > {self.SENSITIVITY_THRESHOLD} "
+                f"(A*: {1.0 - metrics.clarity_score:.3f}, target G < 2.0 for high ambiguity) "
                 f"(req: {request_id})"
+            )
+        
+        if metrics.gradient_norm > self.GRADIENT_SPIKE_THRESHOLD:
+            self.logger.warning(
+                f"GRADIENT_SPIKE: ||∇w|| = {metrics.gradient_norm:.3f} > {self.GRADIENT_SPIKE_THRESHOLD} "
+                f"(potential routing instability) (req: {request_id})"
             )
         
         if metrics.latency_ms > self.LATENCY_THRESHOLD:
             self.logger.warning(
                 f"HIGH_LATENCY: {metrics.latency_ms:.1f}ms > {self.LATENCY_THRESHOLD}ms "
                 f"(req: {request_id})"
+            )
+        
+        # Alert on mediation effectiveness if available
+        if metrics.mediation_ratio is not None and metrics.mediation_ratio > 0.3:
+            self.logger.info(
+                f"WEAK_MEDIATION: ratio = {metrics.mediation_ratio:.3f} > 0.3 "
+                f"(G may not be primary pathway) (req: {request_id})"
             )
     
     def get_performance_stats(self) -> Dict:

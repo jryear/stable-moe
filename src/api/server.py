@@ -85,12 +85,13 @@ class RoutingRequest(BaseModel):
         }
 
 class RoutingResponse(BaseModel):
-    """Response model for routing decisions"""
+    """Response model for routing decisions with enhanced mediation tracking"""
     routing_weights: List[float] = Field(..., description="Stabilized routing weights")
-    metrics: Dict = Field(..., description="Routing stability metrics")
-    request_id: str = Field(..., description="Request identifier")
-    controller_version: str = Field(default="4.72x_improvement", description="Controller version")
+    metrics: Dict = Field(..., description="Enhanced routing stability metrics")
+    request_id: str = Field(..., description="Request identifier") 
+    controller_version: str = Field(default="enhanced_mediation_v2", description="Controller version")
     processing_time_ms: float = Field(..., description="Processing time in milliseconds")
+    mediation_info: Optional[Dict] = Field(None, description="Mediation analysis if available")
 
 class HealthResponse(BaseModel):
     """Health check response model"""
@@ -148,6 +149,15 @@ async def route_request(request: RoutingRequest, background_tasks: BackgroundTas
         # Background logging
         background_tasks.add_task(log_routing_event, req_id, metrics)
         
+        # Enhanced mediation info
+        mediation_info = None
+        if hasattr(metrics, 'mediation_ratio') and metrics.mediation_ratio is not None:
+            mediation_info = {
+                'mediation_ratio': metrics.mediation_ratio,
+                'mediation_strong': metrics.mediation_ratio < 0.3,
+                'expected_G_reduction': getattr(metrics, 'expected_G_reduction', 0.0)
+            }
+        
         return RoutingResponse(
             routing_weights=routing_weights.tolist(),
             metrics={
@@ -158,10 +168,15 @@ async def route_request(request: RoutingRequest, background_tasks: BackgroundTas
                 'latency_ms': metrics.latency_ms,
                 'clarity_score': metrics.clarity_score,
                 'beta': metrics.beta,
-                'lambda': metrics.lambda_val
+                'lambda': metrics.lambda_val,
+                # Enhanced metrics
+                'distance_to_vertex': getattr(metrics, 'distance_to_vertex', metrics.boundary_distance),
+                'gradient_norm': getattr(metrics, 'gradient_norm', 0.0),
+                'expected_G_reduction': getattr(metrics, 'expected_G_reduction', 0.0)
             },
             request_id=req_id,
-            processing_time_ms=processing_time
+            processing_time_ms=processing_time,
+            mediation_info=mediation_info
         )
         
     except ValueError as e:
@@ -255,6 +270,108 @@ async def reset_controller():
     
     controller.reset_state()
     return {"status": "controller_reset", "message": "Controller state has been reset"}
+
+@app.post("/validate-mediation")
+async def validate_mediation():
+    """
+    Run enhanced mediator proof validation
+    Tests: ρ(A*, G) > 0, ρ(G, L_⊥) > 0, ρ(A*, L_⊥ | G) → 0
+    """
+    try:
+        # Import validation function
+        import sys
+        from pathlib import Path
+        validation_path = Path(__file__).parent.parent.parent / "validation"
+        sys.path.insert(0, str(validation_path))
+        
+        from enhanced_mediator_proof import run_enhanced_mediator_proof
+        
+        logger.info("Running enhanced mediator proof validation...")
+        
+        # Run validation (this may take a while due to embedding calls)
+        results = run_enhanced_mediator_proof()
+        
+        if results and len(results) >= 5:
+            # Load the saved results
+            results_path = Path("validation/results/enhanced_mediator_results.json")
+            if results_path.exists():
+                with open(results_path) as f:
+                    validation_data = json.load(f)
+                
+                return {
+                    "status": "completed",
+                    "message": f"Validated {len(results)} prompt pairs",
+                    "summary": validation_data.get('summary', {}),
+                    "correlations": validation_data.get('correlations', {}),
+                    "mediation_confirmed": validation_data.get('summary', {}).get('mediation_confirmed', False),
+                    "recommendation": "Use β/λ schedules to reduce G in high-A* regions" if validation_data.get('summary', {}).get('mediation_confirmed') else "Mediation not strongly established"
+                }
+            else:
+                return {
+                    "status": "completed",
+                    "message": f"Validated {len(results)} prompt pairs",
+                    "warning": "Results file not found, validation may have failed partially"
+                }
+        else:
+            return {
+                "status": "insufficient_data", 
+                "message": "Need more valid prompt pairs for mediation analysis",
+                "suggestion": "Check Ollama service or expand test set"
+            }
+    
+    except ImportError as e:
+        return {
+            "status": "error",
+            "message": "Validation module not available",
+            "detail": str(e)
+        }
+    except Exception as e:
+        logger.error(f"Mediation validation failed: {e}")
+        return {
+            "status": "error", 
+            "message": "Validation failed",
+            "detail": str(e)
+        }
+
+@app.get("/mediation-status")
+async def get_mediation_status():
+    """
+    Get current mediation analysis status and recent results
+    """
+    try:
+        results_path = Path("validation/results/enhanced_mediator_results.json")
+        if results_path.exists():
+            with open(results_path) as f:
+                data = json.load(f)
+            
+            return {
+                "status": "available",
+                "last_analysis": data,
+                "summary": {
+                    "mediation_confirmed": data.get('summary', {}).get('mediation_confirmed', False),
+                    "mediation_ratio": data.get('summary', {}).get('mediation_ratio'),
+                    "n_valid_pairs": data.get('summary', {}).get('n_valid_results', 0),
+                    "key_correlations": {
+                        "rho_A_G": data.get('correlations', {}).get('rho_A_G'),
+                        "rho_G_L_perp": data.get('correlations', {}).get('rho_G_L_perp'),
+                        "rho_A_L_given_G": data.get('correlations', {}).get('rho_A_L_given_G')
+                    }
+                },
+                "control_recommendation": "Reduce G via β/λ schedules in high-A* regions" if data.get('summary', {}).get('mediation_confirmed') else "Mediation pathway unclear"
+            }
+        else:
+            return {
+                "status": "no_analysis",
+                "message": "No mediation analysis available",
+                "suggestion": "Run POST /validate-mediation to generate analysis"
+            }
+    
+    except Exception as e:
+        logger.error(f"Failed to get mediation status: {e}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 async def log_routing_event(request_id: str, metrics: RoutingMetrics):
     """Background task for detailed routing event logging"""
