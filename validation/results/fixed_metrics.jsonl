@@ -1,0 +1,92 @@
+{"timestamp": "2025-08-30T19:49:48.808985", "metric": "ambiguity", "value": 0.4, "label": "What is 2+2?", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:50.027606", "metric": "self_similarity", "value": 0.821949038634185, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:50.105565", "metric": "R_entropy", "value": 383.99981742191835, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:50.105712", "metric": "R_pr", "value": 383.999662323883, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:52.106296", "metric": "ambiguity", "value": 0.0, "label": "List the days of the week", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:52.842455", "metric": "self_similarity", "value": 0.6460570387560088, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:52.915507", "metric": "R_entropy", "value": 383.94141003914143, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:52.915645", "metric": "R_pr", "value": 383.8703943150791, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:52.915717", "metric": "strategy_separation_live", "value": 1.017581967895314, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:52.915762", "metric": "lipschitz", "value": 0.783601768854151, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:54.916690", "metric": "ambiguity", "value": 0.4, "label": "What color is the sky?", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:57.096645", "metric": "self_similarity", "value": 0.7136160058330181, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:57.165182", "metric": "R_entropy", "value": 383.8793022934091, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:57.165349", "metric": "R_pr", "value": 383.7321472540606, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:57.165699", "metric": "strategy_separation_live", "value": 0.9432703076872713, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:57.186801", "metric": "phase_angle", "value": -2.5590847844145923, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:57.186929", "metric": "lipschitz", "value": 0.5576803479935267, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:49:59.188477", "metric": "ambiguity", "value": 0.0, "label": "Explain the concept of time", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:08.309880", "metric": "self_similarity", "value": 0.798874711008073, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:08.374232", "metric": "R_entropy", "value": 383.8024345419506, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:08.374383", "metric": "R_pr", "value": 383.55575602190805, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:08.374774", "metric": "strategy_separation_live", "value": 0.8924612648715674, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:08.395333", "metric": "phase_angle", "value": 0.2680404780057168, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:08.395473", "metric": "lipschitz", "value": 0.41061796690603974, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:10.396822", "metric": "ambiguity", "value": 0.6, "label": "What is consciousness?", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:15.742485", "metric": "self_similarity", "value": 0.8347160613254506, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:15.805300", "metric": "R_entropy", "value": 383.71833065544195, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:15.805519", "metric": "R_pr", "value": 383.36005219310044, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:15.805648", "metric": "strategy_separation_live", "value": 0.87500811498711, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:15.834003", "metric": "phase_angle", "value": -1.965118089236937, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:15.834156", "metric": "lipschitz", "value": 0.3808460806132454, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:17.835628", "metric": "ambiguity", "value": 0.0, "label": "Define intelligence", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:21.887671", "metric": "self_similarity", "value": 0.7931155222196581, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:21.961101", "metric": "R_entropy", "value": 383.6351907762359, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:21.961256", "metric": "R_pr", "value": 383.16569253311843, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:21.961685", "metric": "strategy_separation_live", "value": 0.855293360834754, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:21.982424", "metric": "phase_angle", "value": -2.8060909435684303, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:21.982545", "metric": "lipschitz", "value": 0.34395898614319387, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:23.983417", "metric": "ambiguity", "value": 0.8, "label": "What emerges from overlap?", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:28.273733", "metric": "self_similarity", "value": 0.6029726930837608, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:28.344490", "metric": "R_entropy", "value": 383.56940777251157, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:28.344636", "metric": "R_pr", "value": 383.014351097307, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:28.344884", "metric": "strategy_separation_live", "value": 0.855293360834754, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:28.364826", "metric": "phase_angle", "value": 0.6734840201683221, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:28.364950", "metric": "lipschitz", "value": 0.3373431031990028, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:30.365720", "metric": "ambiguity", "value": 0.4, "label": "The boundary between meaning a", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:36.082164", "metric": "self_similarity", "value": 0.8393447745790298, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:36.147818", "metric": "R_entropy", "value": 383.4769224929366, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:36.147981", "metric": "R_pr", "value": 382.7922675916856, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:36.148169", "metric": "strategy_separation_live", "value": 0.855293360834754, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:36.171221", "metric": "phase_angle", "value": -1.4463017344219824, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:36.171379", "metric": "lipschitz", "value": 0.34627770932594154, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:38.172128", "metric": "ambiguity", "value": 0.2, "label": "Recursive self-reference in th", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:41.895255", "metric": "self_similarity", "value": 0.7569774832514253, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:41.967159", "metric": "R_entropy", "value": 383.40610437332003, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:41.967384", "metric": "R_pr", "value": 382.6297535870006, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:41.967623", "metric": "strategy_separation_live", "value": 0.8646696951137026, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:41.984046", "metric": "phase_angle", "value": -2.520548617098325, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:41.984178", "metric": "lipschitz", "value": 0.3564077961682995, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:44.025566", "metric": "perturbation_base", "value": 0.0, "label": "Explain machine learning", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:44.038714", "metric": "perturbation_distance", "value": 6.961916905181773, "label": "Describe artificial intelligen", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:44.038882", "metric": "ambiguity", "value": 0.0, "label": "Describe artificial intelligen", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:50.012486", "metric": "self_similarity", "value": 0.7498203157426725, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:50.092299", "metric": "R_entropy", "value": 383.2681407029571, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:50.092462", "metric": "R_pr", "value": 382.2721943241637, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:50.092773", "metric": "strategy_separation_live", "value": 0.732271594471454, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:50.121921", "metric": "phase_angle", "value": -1.002934017372955, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:50.122107", "metric": "lipschitz", "value": 0.3500536036162141, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:50.149218", "metric": "perturbation_distance", "value": 7.078926985251403, "label": "What is deep learning?", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:50.149365", "metric": "ambiguity", "value": 0.4, "label": "What is deep learning?", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:54.991112", "metric": "self_similarity", "value": 0.7751545041044889, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:55.066190", "metric": "R_entropy", "value": 383.1314544433515, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:55.066389", "metric": "R_pr", "value": 381.9113870419904, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:55.067077", "metric": "strategy_separation_live", "value": 0.732271594471454, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:55.088624", "metric": "phase_angle", "value": -1.2117881032989137, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:55.088739", "metric": "lipschitz", "value": 0.2834767051032182, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:55.113498", "metric": "perturbation_distance", "value": 6.579815897033084, "label": "How do neural networks work?", "type": "fixed"}
+{"timestamp": "2025-08-30T19:50:55.113663", "metric": "ambiguity", "value": 0.4, "label": "How do neural networks work?", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:04.702691", "metric": "self_similarity", "value": 0.8008877859959566, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:04.772100", "metric": "R_entropy", "value": 382.94249458111744, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:04.772323", "metric": "R_pr", "value": 381.3832953034904, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:04.772638", "metric": "strategy_separation_live", "value": 0.732271594471454, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:04.793046", "metric": "phase_angle", "value": -0.5172658305219916, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:04.793224", "metric": "lipschitz", "value": 0.25541627662330013, "label": "local", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:04.804575", "metric": "perturbation_distance", "value": 8.07967347234177, "label": "Explain quantum computing", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:04.804690", "metric": "ambiguity", "value": 0.0, "label": "Explain quantum computing", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:14.125957", "metric": "self_similarity", "value": 0.7316290655655622, "label": "prompt_response", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:14.204546", "metric": "R_entropy", "value": 382.808476626194, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:14.204743", "metric": "R_pr", "value": 381.00776376416945, "label": "s_matrix", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:14.205174", "metric": "strategy_separation_live", "value": 0.732271594471454, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:14.225022", "metric": "phase_angle", "value": -1.817746119779426, "label": "trajectory", "type": "fixed"}
+{"timestamp": "2025-08-30T19:51:14.225186", "metric": "lipschitz", "value": 0.3141377533799433, "label": "local", "type": "fixed"}

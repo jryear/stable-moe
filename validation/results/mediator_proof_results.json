@@ -1,0 +1,139 @@
+{
+  "results": [
+    {
+      "pair_id": 1,
+      "prompt1": "What is 2+2?",
+      "prompt2": "What is 3+3?",
+      "A_star": 0.22500000000000003,
+      "L_perp": 3.357591061924953,
+      "G": 0.009592765008100934,
+      "delta_x": 0.8769655179184989,
+      "delta_w": 0.008412524143192454,
+      "input_similarity": 0.6154657398584618
+    },
+    {
+      "pair_id": 2,
+      "prompt1": "The capital of France is",
+      "prompt2": "The capital of Spain is",
+      "A_star": 0.17500000000000002,
+      "L_perp": 3.011509705918489,
+      "G": 0.01462423650016662,
+      "delta_x": 0.9576460082489551,
+      "delta_w": 0.01400484172269747,
+      "input_similarity": 0.541457061081241
+    },
+    {
+      "pair_id": 3,
+      "prompt1": "Calculate 10 * 5",
+      "prompt2": "Calculate 12 * 4",
+      "A_star": 0.17500000000000002,
+      "L_perp": 3.023300193422185,
+      "G": 0.019009464814399666,
+      "delta_x": 0.9099319438843533,
+      "delta_w": 0.01729731928977737,
+      "input_similarity": 0.5860119284355103
+    },
+    {
+      "pair_id": 4,
+      "prompt1": "Explain photosynthesis",
+      "prompt2": "Explain respiration",
+      "A_star": 0.23750000000000002,
+      "L_perp": 2.6637962522324576,
+      "G": 0.024801078640489856,
+      "delta_x": 1.062955025436104,
+      "delta_w": 0.026362431201945792,
+      "input_similarity": 0.43506330665447324
+    },
+    {
+      "pair_id": 5,
+      "prompt1": "What causes rain?",
+      "prompt2": "What causes wind?",
+      "A_star": 0.25,
+      "L_perp": 3.245192559838918,
+      "G": 0.010681334111768625,
+      "delta_x": 0.8518400605788148,
+      "delta_w": 0.00909878830751288,
+      "input_similarity": 0.6371842553017208
+    },
+    {
+      "pair_id": 6,
+      "prompt1": "How do computers work?",
+      "prompt2": "How do engines work?",
+      "A_star": 0.23750000000000002,
+      "L_perp": 3.097188673376164,
+      "G": 0.008691626770327969,
+      "delta_x": 0.9973167939969876,
+      "delta_w": 0.008668305353893508,
+      "input_similarity": 0.5026796058907985
+    },
+    {
+      "pair_id": 7,
+      "prompt1": "What is consciousness?",
+      "prompt2": "What is intelligence?",
+      "A_star": 0.28214285714285714,
+      "L_perp": 2.7605531640968586,
+      "G": 0.019295502281751756,
+      "delta_x": 1.0781377582740663,
+      "delta_w": 0.020803209594115475,
+      "input_similarity": 0.418809486743865
+    },
+    {
+      "pair_id": 8,
+      "prompt1": "Explain the meaning of life",
+      "prompt2": "Explain the nature of reality",
+      "A_star": 0.2785714285714286,
+      "L_perp": 2.9611342022546436,
+      "G": 0.010594112909722017,
+      "delta_x": 1.0139846655815707,
+      "delta_w": 0.010742268046491995,
+      "input_similarity": 0.4859175486614744
+    },
+    {
+      "pair_id": 9,
+      "prompt1": "What emerges from complexity?",
+      "prompt2": "What emerges from chaos?",
+      "A_star": 0.25,
+      "L_perp": 2.8803760523625486,
+      "G": 0.006141333170932515,
+      "delta_x": 0.9753786414679291,
+      "delta_w": 0.0059901252112074185,
+      "input_similarity": 0.5243182525687867
+    },
+    {
+      "pair_id": 10,
+      "prompt1": "The boundary between meaning and",
+      "prompt2": "The boundary between truth and",
+      "A_star": 0.2857142857142857,
+      "L_perp": 3.747226777243709,
+      "G": 0.025932616892838312,
+      "delta_x": 0.8720402942074703,
+      "delta_w": 0.022614286890732953,
+      "input_similarity": 0.6197728623012049
+    },
+    {
+      "pair_id": 11,
+      "prompt1": "Recursive self-reference in",
+      "prompt2": "Recursive meta-reference in",
+      "A_star": 0.2571428571428572,
+      "L_perp": 4.267700376145389,
+      "G": 0.012199008227665063,
+      "delta_x": 0.695397861156469,
+      "delta_w": 0.00848316424194746,
+      "input_similarity": 0.7582109070157893
+    }
+  ],
+  "correlations": {
+    "rho_A_L": 0.08238180397072707,
+    "p_A_L": 0.8097088614317693,
+    "rho_A_G": 0.21510804370134293,
+    "p_A_G": 0.5252963882324275,
+    "rho_G_L": -0.08181818181818183,
+    "p_G_L": 0.8109903943000458,
+    "rho_A_L_given_G": 0.2062025168994364,
+    "p_A_L_given_G": 0.5676268307324446
+  },
+  "mediation": {
+    "mediation_confirmed": false,
+    "mediation_ratio": 2.5030104277601932
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "results": [
+    {
+      "pair_id": 1,
+      "prompt1": "What is 5+3?",
+      "prompt2": "What is 7+2?",
+      "A_star": 0.22500000000000003,
+      "G_normal": 0.008521059484790552,
+      "L_frozen": 1.0409332671663378,
+      "L_ghost": 1.0409332671663378,
+      "frozen_reduction": -121.16006094832032,
+      "ghost_reduction": -121.16006094832032
+    },
+    {
+      "pair_id": 2,
+      "prompt1": "The capital of Japan is",
+      "prompt2": "The capital of Italy is",
+      "A_star": 0.17500000000000002,
+      "G_normal": 0.019932188291313643,
+      "L_frozen": 1.02452060139367,
+      "L_ghost": 1.02452060139367,
+      "frozen_reduction": -50.40030467401548,
+      "ghost_reduction": -50.40030467401548
+    },
+    {
+      "pair_id": 3,
+      "prompt1": "Explain gravity briefly",
+      "prompt2": "Explain magnetism briefly",
+      "A_star": 0.23750000000000002,
+      "G_normal": 0.01849825889805467,
+      "L_frozen": 0.9431149603055174,
+      "L_ghost": 0.9431149603055174,
+      "frozen_reduction": -49.983982628803815,
+      "ghost_reduction": -49.983982628803815
+    },
+    {
+      "pair_id": 4,
+      "prompt1": "How do plants grow?",
+      "prompt2": "How do animals move?",
+      "A_star": 0.25,
+      "G_normal": 0.004346989675645679,
+      "L_frozen": 1.0352478856951033,
+      "L_ghost": 1.0352478856951033,
+      "frozen_reduction": -237.15277370967286,
+      "ghost_reduction": -237.15277370967286
+    },
+    {
+      "pair_id": 5,
+      "prompt1": "What is consciousness?",
+      "prompt2": "What is intelligence?",
+      "A_star": 0.28214285714285714,
+      "G_normal": 0.019295502281751756,
+      "L_frozen": 1.014936810701738,
+      "L_ghost": 1.014936810701738,
+      "frozen_reduction": -51.59965479426439,
+      "ghost_reduction": -51.59965479426439
+    },
+    {
+      "pair_id": 6,
+      "prompt1": "The meaning of existence",
+      "prompt2": "The nature of reality",
+      "A_star": 0.21607142857142858,
+      "G_normal": 0.0249060196264366,
+      "L_frozen": 1.0209676836509733,
+      "L_ghost": 1.0209676836509733,
+      "frozen_reduction": -39.99280651712233,
+      "ghost_reduction": -39.99280651712233
+    }
+  ],
+  "summary": {
+    "avg_frozen_reduction": -91.71493054536654,
+    "avg_ghost_reduction": -91.71493054536654,
+    "frozen_confirmed": false,
+    "ghost_confirmed": false
+  }
+}

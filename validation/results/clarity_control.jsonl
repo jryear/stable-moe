@@ -1,0 +1,7 @@
+{"timestamp": "2025-08-30T20:43:48.665825", "A_star": 0.1, "clarity": 0.9, "beta": 1.52, "lambda": 0.64, "route_entropy": 1.4018769508080835, "route_max": 0.42001480124634655, "route_argmax": 2}
+{"timestamp": "2025-08-30T20:43:48.666197", "A_star": 0.5, "clarity": 0.5, "beta": 1.2000000000000002, "lambda": 0.4, "route_entropy": 1.4332714329361256, "route_max": 0.4020448124493606, "route_argmax": 2}
+{"timestamp": "2025-08-30T20:43:48.666283", "A_star": 0.9, "clarity": 0.09999999999999998, "beta": 0.88, "lambda": 0.15999999999999998, "route_entropy": 1.447608852083071, "route_max": 0.3925745481877915, "route_argmax": 2}
+{"timestamp": "2025-08-30T20:45:07.584756", "A_star": 0.8, "clarity": 0.19999999999999996, "beta": 0.96, "lambda": 0.21999999999999997, "route_entropy": 1.4083294754411166, "route_max": 0.4560080423203928, "route_argmax": 3}
+{"timestamp": "2025-08-30T20:45:07.584916", "A_star": 0.8, "clarity": 0.19999999999999996, "beta": 0.96, "lambda": 0.21999999999999997, "route_entropy": 1.4156052957791894, "route_max": 0.45055962372690184, "route_argmax": 3}
+{"timestamp": "2025-08-31T00:38:42.858610", "A_star": 0.8, "clarity": 0.19999999999999996, "beta": 0.96, "lambda": 0.21999999999999997, "route_entropy": 1.4083294754411166, "route_max": 0.4560080423203928, "route_argmax": 3}
+{"timestamp": "2025-08-31T00:38:42.859269", "A_star": 0.8, "clarity": 0.19999999999999996, "beta": 0.96, "lambda": 0.21999999999999997, "route_entropy": 1.4156052957791894, "route_max": 0.45055962372690184, "route_argmax": 3}

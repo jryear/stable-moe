@@ -1,0 +1,42 @@
+# Testing dependencies for MoE Routing
+# Comprehensive test framework requirements
+
+# Core testing framework
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-timeout==2.2.0
+pytest-xdist==3.5.0  # Parallel test execution
+
+# Performance and memory testing
+pytest-benchmark==4.0.0
+pytest-monitor==1.6.6
+memory-profiler==0.61.0
+psutil==5.9.6
+
+# HTTP testing for API integration
+httpx==0.25.2
+requests-mock==1.11.0
+
+# Mock and test utilities
+pytest-mock==3.12.0
+responses==0.24.1
+
+# Code quality and coverage
+coverage==7.3.2
+pytest-html==4.1.1  # HTML test reports
+
+# Stress testing utilities
+locust==2.17.0  # Load testing (optional)
+tracemalloc  # Built-in memory tracing
+
+# Backend-specific test dependencies
+# MLX testing (optional)
+# mlx-lm>=0.5.0  # Uncomment if testing real MLX
+
+# vLLM testing (optional) 
+# vllm>=0.2.0  # Uncomment if testing real vLLM
+
+# Development and debugging
+ipdb==0.13.13
+rich==13.7.0  # Better test output formatting
